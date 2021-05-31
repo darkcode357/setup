@@ -16,15 +16,9 @@
 #  You will need 25GB+ free HDD space before running.         #
 #                             ---                             #
 #  Command line arguments:                                    #
-#    -burp     = Automates configuring Burp Suite (Community) #
 #    -dns      = Use OpenDNS and locks permissions            #
-#    -openvas  = Installs & configures OpenVAS vuln scanner   #
-#    -osx      = Changes to Apple keyboard layout             #
 #                                                             #
-#    -keyboard <value> = Change the keyboard layout language  #
-#    -timezone <value> = Change the timezone location         #
-#                                                             #
-#  e.g. # bash setup.sh -burp -keyboard gb -openvas    #
+#  e.g. # bash setup.sh -dns                                  #
 #                             ---                             #
 #  Will cut it up (so modular based), at a later date...      #
 #                             ---                             #
