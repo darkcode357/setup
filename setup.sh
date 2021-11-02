@@ -83,18 +83,33 @@ done
 
 
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) config  ${GREEN} username & password ${RESET}"
-#echo dsa | sudo -S ls /tmp
 echo "username:"
 read username
 echo "username_password:"
 read user_password
 echo "root_password:"
 read root_password
+
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) configure  ${GREEN}  the ${username} user ${RESET}"
 echo ${user_password} | /bin/su -c "mkdir -v -p /home/${username}/OneForAll/Projects/{Golang,Python,C,Ruby,Php,Java,Shell_Script}" - ${username}
 echo ${user_password} | /bin/su -c "mkdir -v -p /home/${username}/OneForAll/Hacking/{Documents,Scripts,Vms,Operations,Ctf}" - ${username}
 echo ${user_password} | /bin/su -c "mkdir -v -p /home/${username}/OneForAll/Tools/{Tools_Git,My_Tools}" - ${username}
 echo ${user_password} | /bin/su -c "mkdir -v -p /home/${username}/OneForAll/Git_TMP" - ${username}
+apt install -y emacs
+echo ${user_password} | /bin/su -c "git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d" - ${username}
+echo ${user_password} | /bin/su -c "~/.emacs.d/bin/doom -y install " - ${username}
+
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) configure  ${GREEN}  gpg ${username} server ${RESET}"
+
+#/bin/bash -c "$(curl -sL https://git.io/vokNn)"
+#sudo apt-fast install -y ubuntustudio-fonts ubuntustudio-photography ubuntustudio-graphics ubuntustudio-publishing ubuntustudio-controls ubuntustudio-icon-theme ubuntustudio-menu snap* flatpak* docker* vagrant* nvidia-cuda-* grc bash-completion terminator zsh tmux screen vim git wdiff meld vbindiff virtualenvwrapper golang gitg libreoffice ipcalc psmisc pv pwgen htop powertop iotop ca-certificates testssl.sh axel html2text git gparted filezilla ncftp p7zip-full zip file-roller unace hashid
+
+#axel -n10  https://downloads.vivaldi.com/stable/vivaldi-stable_4.3.2439.63-1_amd64.deb
+#sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+#echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+#sudo apt update
+#sudo dpkg *.deb
+#apt install brave-browser google-chrome-stable 
 
 ##### Check user inputs
 if [[ -n "${timezone}" && ! -f "/usr/share/zoneinfo/${timezone}" ]]; then
@@ -199,6 +214,7 @@ if [[ $(which gnome-shell) ]]; then
   fi
   ##### Disable its auto notification package updater
   (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Disabling GNOME's ${GREEN}notification package updater${RESET} service ~ in case it runs during this script"
+
   export DISPLAY=:0.0
   timeout 5 killall -w /usr/lib/apt/methods/http >/dev/null 2>&1
 
@@ -206,10 +222,11 @@ if [[ $(which gnome-shell) ]]; then
   ##### Disable screensaver
   (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Disabling ${GREEN}screensaver${RESET}"
   xset s off
-  gsettings set org.gnome.desktop.session idle-delay 0
-  gsettings set org.gnome.desktop.screensaver lock-delay 3600
-  gsettings set org.gnome.desktop.screensaver lock-enabled false
-  gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
+
+  echo ${user_password} | /bin/su -c "gsettings set org.gnome.desktop.screensaver idle-activation-enabled false" - ${username}
+  echo ${user_password} | /bin/su -c "gsettings set org.gnome.desktop.screensaver lock-enabled false" - ${username}
+  echo ${user_password} | /bin/su -c "gsettings set org.gnome.desktop.screensaver lock-delay 3600" - ${username}
+  echo ${user_password} | /bin/su -c "gsettings set org.gnome.desktop.session idle-delay 0" - ${username}
 else
   echo -e "\n\n ${YELLOW}[i]${RESET} ${YELLOW}Skipping disabling package updater${RESET}..."
 fi
@@ -280,14 +297,12 @@ apt -y  install ubuntustudio-menu \
 echo -e " ${YELLOW}[i]${RESET}  ...this ${BOLD}may take a while${RESET} depending on your pop version"
 apt -y  install snap* \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-for i in spotify  onlyoffice-desktopeditors gitkraken telegram-desktop slack bitwarden keepassx-elopio polar-bookshelf buka kdictionary fluent-reader gnome-characters termius-app fast mailspring teams todoist joplin-desktop notion-snap; do
+for i in spotify  onlyoffice-desktopeditors gitkraken telegram-desktop  bitwarden keepassx-elopio polar-bookshelf buka kdictionary fluent-reader gnome-characters termius-app fast mailspring teams todoist joplin-desktop notion-snap; do
     echo -e "\n\n ${GREEN}[+]${RESET} Installing ${GREEN} ${i} ${RESET}"
-    snap install ${i}
+    snap install ${i} 
 done
-
-#for i in spotify  onlyoffice-desktopeditors gitkraken telegram-desktop slack bitwarden keepassx-elopio polar-bookshelf buka kdictionary fluent-reader gnome-characters termius-app fast mailspring teams todoist joplin-desktop notion-snap; do
-#    echo -e "\n\n ${GREEN}[+]${RESET} Installing ${GREEN} ${i} ${RESET}"
-#    snap install ${i}
+snap install   gitkraken --classic
+snap install slack --classic
 ##### Install "flatpak" meta packages ()
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}flatpak${RESET} meta-package"
 echo -e " ${YELLOW}[i]${RESET}  ...this ${BOLD}may take a while${RESET} depending on your pop version"
@@ -337,8 +352,10 @@ cd ..
 cd flat-remix-gnome
 make install
 cd ..
-gsettings set org.gnome.desktop.interface gtk-theme "Flat-Remix-GTK-Red-Dark"
-gsettings set org.gnome.desktop.interface icon-theme 'Flat-Remix-Blue-Dark'
+echo ${user_password} | /bin/su -c "gsettings set org.gnome.desktop.interface gtk-theme 'Flat-Remix-GTK-Red-Dark'" - ${username}
+echo ${user_password} | /bin/su -c "gsettings set org.gnome.desktop.interface icon-theme 'Flat-Remix-Blue-Dark'" - ${username}
+
+
 
 ##### Configure GNOME terminal   Note: need to restart xserver for effect
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Configuring GNOME ${GREEN}terminal${RESET} ~ CLI interface"
@@ -878,8 +895,7 @@ apt -y  install ipcalc sipcalc \
 
 ##### Install asciinema
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}asciinema${RESET} ~ CLI terminal recorder"
-curl -s -L https://asciinema.org/install | sh
-
+sudo apt  install -y asciinema
 
 
 
