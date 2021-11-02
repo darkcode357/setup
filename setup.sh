@@ -36,7 +36,7 @@ wget -qO setup.sh https://raw.githubusercontent.com/darkcode357/setup/master/set
 ################################################################################
 fi
 #-Defaults-------------------------------------------------------------#
-
+#### todo: add                
 
 ##### Location information
 
@@ -66,7 +66,6 @@ while [[ "${#}" -gt 0 && ."${1}" == .-* ]]; do
     -dns|--dns )
       hardenDNS=true;;
 
-
     -keyboard|--keyboard )
       keyboardLayout="${1}"; shift;;
     -keyboard=*|--keyboard=* )
@@ -82,6 +81,21 @@ while [[ "${#}" -gt 0 && ."${1}" == .-* ]]; do
    esac
 done
 
+
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) config  ${GREEN} username & password ${RESET}"
+#echo dsa | sudo -S ls /tmp
+echo "username:"
+read username
+echo "username_password:"
+read user_password
+echo "root_password:"
+read root_password
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) configure  ${GREEN}  the ${username} user ${RESET}"
+echo ${user_password} | /bin/su -c "mkdir -p $HOME/Projects/{Golang,Python,C,Ruby,Php,Java,Shell_Script}" - ${username}
+echo ${user_password} | /bin/su -c "mkdir -p $HOME/Hacking/{Documents,Scripts,Vms,Operations,Ctf}" - ${username}
+echo ${user_password} | /bin/su -c "mkdir -p $HOME/Tools/{Tools_Git,My_Tools}" - ${username}
+echo ${user_password} | /bin/su -c "mkdir -p $HOME/Git_TMP" - ${username}
+
 ##### Check user inputs
 if [[ -n "${timezone}" && ! -f "/usr/share/zoneinfo/${timezone}" ]]; then
   echo -e ' '${RED}'[!]'${RESET}" Looks like the ${RED}timezone '${timezone}'${RESET} is incorrect/not supported (Example: ${BOLD}Europe/London${RESET})" 1>&2
@@ -93,7 +107,8 @@ elif [[ -n "${keyboardLayout}" && -e /usr/share/X11/xkb/rules/xorg.lst ]]; then
     echo -e ' '${RED}'[!]'${RESET}" Quitting..." 1>&2
     exit 1
   fi
-fi
+fi 
+
 
 #-Start----------------------------------------------------------------#
 ##### Set static & protecting DNS name servers.   Note: May cause issues with forced values (e.g. captive portals etc)
@@ -110,6 +125,9 @@ if [[ "${hardenDNS}" != "false" ]]; then
 else
   echo -e "\n\n ${YELLOW}[i]${RESET} ${YELLOW}Skipping DNS${RESET} (missing: '$0 ${BOLD}--dns${RESET}')..." 1>&2
 fi
+
+
+
 ##### Update location information - set either value to "" to skip.
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Updating ${GREEN}location information${RESET}"
 #--- Configure keyboard layout (location)
@@ -132,18 +150,7 @@ if [[ -n "${timezone}" ]]; then
 else
   echo -e "\n\n ${YELLOW}[i]${RESET} ${YELLOW}Skipping time zone${RESET} (missing: '$0 ${BOLD}--timezone <value>${RESET}')..." 1>&2
 fi
-#--- Installing ntp tools
-(( STAGE++ )); echo -e " ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}ntpdate${RESET} ~ keeping the time in sync"
-apt -y  install ntp ntpdate \
-  || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-#--- Update time
-ntpdate -b -s -u pool.ntp.org
-#--- Start service
-systemctl restart ntp
-#--- Remove from start up
-systemctl disable ntp 2>/dev/null
-#--- Only used for stats at the end
-start_time=$(date +%s)
+
 
 ##### Update OS from network repositories
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Updating OS${RESET} from network repositories"
@@ -210,7 +217,7 @@ fi
 
 ##### Install kernel headers
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}kernel headers${RESET}"
-apt -y  install make gcc "linux-headers-$(uname -r)" \
+5  install make gcc "linux-headers-$(uname -r)" \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 if [[ $? -ne 0 ]]; then
   echo -e ' '${RED}'[!]'${RESET}" There was an ${RED}issue installing kernel headers${RESET}" 1>&2
@@ -218,6 +225,53 @@ if [[ $? -ne 0 ]]; then
   echo -e " ${YELLOW}[i]${RESET} ${YELLOW}Reboot${RESET} your machine"
   #exit 1
 fi
+
+##### add video suport
+
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL})add video  ${GREEN}tools${RESET}"
+apt install -y ubuntustudio-video
+
+##### Install "ubuntustudio-fonts" meta packages ()
+(( STAGE++ )); echo -e "\n\n $GREEN[+]$RESET ($STAGE/$TOTAL) Installing $GREEN ubuntustudio-fonts $RESET meta-package"
+echo -e "$YELLOW[i]$RESET  ...this $BOLDmay take a while$RESET depending on your pop version"
+apt -y  install ubuntustudio-fonts \
+|| echo -e " "$RED"[!] Issue with apt install"$RESET 1>&2
+    
+##### Install "ubuntustudio-photography" meta packages ()
+(( STAGE++ )); echo -e "\n\n $GREEN[+]$RESET ($STAGE/$TOTAL) Installing $GREEN ubuntustudio-photography $RESET meta-package"
+echo -e "$YELLOW[i]$RESET  ...this $BOLDmay take a while$RESET depending on your pop version"
+apt -y  install ubuntustudio-photography \
+|| echo -e " "$RED"[!] Issue with apt install"$RESET 1>&2
+    
+##### Install "ubuntustudio-graphics" meta packages ()
+(( STAGE++ )); echo -e "\n\n $GREEN[+]$RESET ($STAGE/$TOTAL) Installing $GREEN ubuntustudio-graphics $RESET meta-package"
+echo -e "$YELLOW[i]$RESET  ...this $BOLDmay take a while$RESET depending on your pop version"
+apt -y  install ubuntustudio-graphics \
+|| echo -e " "$RED"[!] Issue with apt install"$RESET 1>&2
+    
+##### Install "ubuntustudio-publishing" meta packages ()
+(( STAGE++ )); echo -e "\n\n $GREEN[+]$RESET ($STAGE/$TOTAL) Installing $GREEN ubuntustudio-publishing $RESET meta-package"
+echo -e "$YELLOW[i]$RESET  ...this $BOLDmay take a while$RESET depending on your pop version"
+apt -y  install ubuntustudio-publishing \
+|| echo -e " "$RED"[!] Issue with apt install"$RESET 1>&2
+    
+##### Install "ubuntustudio-controls" meta packages ()
+(( STAGE++ )); echo -e "\n\n $GREEN[+]$RESET ($STAGE/$TOTAL) Installing $GREEN ubuntustudio-controls $RESET meta-package"
+echo -e "$YELLOW[i]$RESET  ...this $BOLDmay take a while$RESET depending on your pop version"
+apt -y  install ubuntustudio-controls \
+|| echo -e " "$RED"[!] Issue with apt install"$RESET 1>&2
+    
+##### Install "ubuntustudio-icon-theme" meta packages ()
+(( STAGE++ )); echo -e "\n\n $GREEN[+]$RESET ($STAGE/$TOTAL) Installing $GREEN ubuntustudio-icon-theme $RESET meta-package"
+echo -e "$YELLOW[i]$RESET  ...this $BOLDmay take a while$RESET depending on your pop version"
+apt -y  install ubuntustudio-icon-theme \
+|| echo -e " "$RED"[!] Issue with apt install"$RESET 1>&2
+    
+##### Install "ubuntustudio-menu" meta packages ()
+(( STAGE++ )); echo -e "\n\n $GREEN[+]$RESET ($STAGE/$TOTAL) Installing $GREEN ubuntustudio-menu $RESET meta-package"
+echo -e "$YELLOW[i]$RESET  ...this $BOLDmay take a while$RESET depending on your pop version"
+apt -y  install ubuntustudio-menu \
+|| echo -e " "$RED"[!] Issue with apt install"$RESET 1>&2
 
 ##### Install "snap" meta packages ()
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}snap${RESET} meta-package"
@@ -241,28 +295,7 @@ apt -y  install docker* \
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}tools${RESET} meta-package"
 echo -e " ${YELLOW}[i]${RESET}  ...this ${BOLD}may take a while${RESET} depending on your pop version"
 echo "iniciando o script...[ok]"
-rm /etc/apt/sources.list.d/pop-os-apps.sources  
-echo X-Repolib-Name: Pop_OS Applications >> /etc/apt/sources.list.d/pop-os-apps.sources
-echo Enabled: yes >>  /etc/apt/sources.list.d/pop-os-apps.sources
-echo Types: deb   >>  /etc/apt/sources.list.d/pop-os-apps.sources
-echo URIs: http://apt.pop-os.org/proprietary >>  /etc/apt/sources.list.d/pop-os-apps.sources
-echo Suites: hirsute >> /etc/apt/sources.list.d/pop-os-apps.sources
-echo Components: main >> /etc/apt/sources.list.d/pop-os-apps.sources
-rm /etc/apt/sources.list.d/system76-ubuntu-pop-groovy.list
-echo "deb http://ppa.launchpad.net/system76/pop/ubuntu/ hirsute main" >> /etc/apt/sources.list.d/system76-ubuntu-pop-hirsute.list
-echo "deb-src http://ppa.launchpad.net/system76/pop/ubuntu/ hirsute main" >> /etc/apt/sources.list.d/system76-ubuntu-pop-hirsute.list
-rm /etc/apt/sources.list.d/system.sources
-echo X-Repolib-Name: Pop_OS System Sources >> /etc/apt/sources.list.d/system.sources
-echo Enabled: yes >> /etc/apt/sources.list.d/system.sources
-echo Types: deb deb-src >> /etc/apt/sources.list.d/system.sources
-echo URIs: http://us.archive.ubuntu.com/ubuntu/ >> /etc/apt/sources.list.d/system.sources
-echo Suites: hirsute hirsute-security hirsute-updates hirsute-backports hirsute-proposed >> /etc/apt/sources.list.d/system.sources
-echo Components: main restricted universe multiverse >> /etc/apt/sources.list.d/system.sources
-echo X-Repolib-Default-Mirror: http://us.archive.ubuntu.com/ubuntu/ >> /etc/apt/sources.list.d/system.sources
-echo "add repository to  insync.io"
-wget https://d2t3ff60b2tol4.cloudfront.net/builds/insync_3.4.0.40973-focal_amd64.deb 
-dpkg -i insync_3.4.0.40973-focal_amd64.deb
-apt -y  install vagrant* obs* gconf* vlc* tilix*  terminator* code virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso virtualbox-guest-dkms virtualbox-guest-source virtualbox-guest-utils virtualbox-guest-x11 virtualbox-qt virtualbox-source  python3-dev python3-setuptools* python3-flask* python3-django* gcc-10-plugin-dev cmake*  python3-pep* python3-auto* golang-1.16* php-all-dev \
+apt -y  install vagrant* obs* gconf* vlc* tilix*  terminator* code virtualbox virtualbox-dkms virtualbox-ext-pack virtualbox-guest-additions-iso  virtualbox-guest-source virtualbox-guest-utils virtualbox-guest-x11 virtualbox-qt virtualbox-source  python3-dev python3-setuptools* python3-flask* python3-django* gcc-10-plugin-dev cmake*  python3-pep* python3-auto* golang-1.16* php-all-dev \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
 ##### Install "nvidia-cuda" meta packages ()
@@ -275,6 +308,24 @@ apt -y  install nvidia-cuda-* \
 ##### Set audio level
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Setting ${GREEN}audio${RESET} levels"
 amixer sset 'Master' 25%
+##### theme install
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) theme GNOME ${GREEN}gnome-shell${RESET} ~  interface"
+mkdir theme
+cd theme
+git clone https://github.com/daniruiz/flat-remix
+git clone https://github.com/daniruiz/flat-remix-gtk
+git clone https://github.com/daniruiz/flat-remix-gnome
+cd flat-remix
+make install
+cd ..
+cd flat-remix-gnome
+make install
+cd ..
+cd flat-remix-gnome
+make install
+cd ..
+gsettings set org.gnome.desktop.interface gtk-theme "Flat-Remix-GTK-Red-Dark"
+gsettings set org.gnome.desktop.interface icon-theme 'Flat-Remix-Blue-Dark'
 
 ##### Configure GNOME terminal   Note: need to restart xserver for effect
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Configuring GNOME ${GREEN}terminal${RESET} ~ CLI interface"
@@ -494,6 +545,7 @@ grep -q '^## wordlist' "${file}" 2>/dev/null \
 #--- Apply new aliases
 source "${file}" || source ~/.zshrc
 #--- Check
+
 #alias
 ##### Install (GNOME) Terminator
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing (GNOME) ${GREEN}Terminator${RESET} ~ multiple terminals in a single window"
@@ -919,6 +971,7 @@ file=~/.config/filezilla/filezilla.xml; [ -e "${file}" ] && cp -n $file{,.bkup}
 </FileZilla3>
 fi
 EOF
+
 sed -i 's#^.*"Default editor".*#\t<Setting name="Default editor">2/usr/bin/gedit</Setting>#' "${file}"
 [ -e /usr/bin/atom ] && sed -i 's#^.*"Default editor".*#\t<Setting name="Default editor">2/usr/bin/atom</Setting>#' "${file}"
 sed -i 's#^.*"Always use default editor".*#\t<Setting name="Always use default editor">1</Setting>#' "${file}"
@@ -951,5 +1004,4 @@ done
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}hashid${RESET} ~ identify hash types"
 apt -y  install hashid \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
 
