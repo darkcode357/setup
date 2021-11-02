@@ -91,10 +91,10 @@ read user_password
 echo "root_password:"
 read root_password
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) configure  ${GREEN}  the ${username} user ${RESET}"
-echo ${user_password} | /bin/su -c "mkdir -p $HOME/Projects/{Golang,Python,C,Ruby,Php,Java,Shell_Script}" - ${username}
-echo ${user_password} | /bin/su -c "mkdir -p $HOME/Hacking/{Documents,Scripts,Vms,Operations,Ctf}" - ${username}
-echo ${user_password} | /bin/su -c "mkdir -p $HOME/Tools/{Tools_Git,My_Tools}" - ${username}
-echo ${user_password} | /bin/su -c "mkdir -p $HOME/Git_TMP" - ${username}
+echo ${user_password} | /bin/su -c "mkdir -v -p /home/${username}/OneForAll/Projects/{Golang,Python,C,Ruby,Php,Java,Shell_Script}" - ${username}
+echo ${user_password} | /bin/su -c "mkdir -v -p /home/${username}/OneForAll/Hacking/{Documents,Scripts,Vms,Operations,Ctf}" - ${username}
+echo ${user_password} | /bin/su -c "mkdir -v -p /home/${username}/OneForAll/Tools/{Tools_Git,My_Tools}" - ${username}
+echo ${user_password} | /bin/su -c "mkdir -v -p /home/${username}/OneForAll/Git_TMP" - ${username}
 
 ##### Check user inputs
 if [[ -n "${timezone}" && ! -f "/usr/share/zoneinfo/${timezone}" ]]; then
@@ -205,9 +205,11 @@ if [[ $(which gnome-shell) ]]; then
 
   ##### Disable screensaver
   (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Disabling ${GREEN}screensaver${RESET}"
-  xset s 0 0
   xset s off
   gsettings set org.gnome.desktop.session idle-delay 0
+  gsettings set org.gnome.desktop.screensaver lock-delay 3600
+  gsettings set org.gnome.desktop.screensaver lock-enabled false
+  gsettings set org.gnome.desktop.screensaver idle-activation-enabled false
 else
   echo -e "\n\n ${YELLOW}[i]${RESET} ${YELLOW}Skipping disabling package updater${RESET}..."
 fi
@@ -217,7 +219,7 @@ fi
 
 ##### Install kernel headers
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}kernel headers${RESET}"
-5  install make gcc "linux-headers-$(uname -r)" \
+apt  install make gcc "linux-headers-$(uname -r)" \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 if [[ $? -ne 0 ]]; then
   echo -e ' '${RED}'[!]'${RESET}" There was an ${RED}issue installing kernel headers${RESET}" 1>&2
@@ -278,7 +280,14 @@ apt -y  install ubuntustudio-menu \
 echo -e " ${YELLOW}[i]${RESET}  ...this ${BOLD}may take a while${RESET} depending on your pop version"
 apt -y  install snap* \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+for i in spotify  onlyoffice-desktopeditors gitkraken telegram-desktop slack bitwarden keepassx-elopio polar-bookshelf buka kdictionary fluent-reader gnome-characters termius-app fast mailspring teams todoist joplin-desktop notion-snap; do
+    echo -e "\n\n ${GREEN}[+]${RESET} Installing ${GREEN} ${i} ${RESET}"
+    snap install ${i}
+done
 
+#for i in spotify  onlyoffice-desktopeditors gitkraken telegram-desktop slack bitwarden keepassx-elopio polar-bookshelf buka kdictionary fluent-reader gnome-characters termius-app fast mailspring teams todoist joplin-desktop notion-snap; do
+#    echo -e "\n\n ${GREEN}[+]${RESET} Installing ${GREEN} ${i} ${RESET}"
+#    snap install ${i}
 ##### Install "flatpak" meta packages ()
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}flatpak${RESET} meta-package"
 echo -e " ${YELLOW}[i]${RESET}  ...this ${BOLD}may take a while${RESET} depending on your pop version"
@@ -290,7 +299,11 @@ apt -y  install flatpak* \
 echo -e " ${YELLOW}[i]${RESET}  ...this ${BOLD}may take a while${RESET} depending on your pop version"
 apt -y  install docker* \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-
+usermod -aG docker ${username}
+for i in nextcloud bash redis ubuntu alpine nginx busybox python postgres mysql docker mariadb ; do
+    echo -e "\n\n ${GREEN}[+]${RESET} Installing ${GREEN} ${i} ${RESET}"
+    docker pull ${i}
+done
 ##### Install "tools" meta packages ()
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}tools${RESET} meta-package"
 echo -e " ${YELLOW}[i]${RESET}  ...this ${BOLD}may take a while${RESET} depending on your pop version"
@@ -956,21 +969,7 @@ apt -y  install gparted \
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}FileZilla${RESET} ~ GUI file transfer"
 apt -y  install filezilla \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-#--- Configure filezilla
-export DISPLAY=:0.0
-timeout 5 filezilla >/dev/null 2>&1     # Start and kill. Files needed for first time run
-mkdir -p ~/.config/filezilla/
-file=~/.config/filezilla/filezilla.xml; [ -e "${file}" ] && cp -n $file{,.bkup}
-[ ! -e "${file}" ] && cat <<EOF> "${file}"
-<?xml version="1.0" encoding="UTF-8"?>
-<FileZilla3 version="3.15.0.2" platform="*nix">
-  <Settings>
-    <Setting name="Default editor">0</Setting>
-    <Setting name="Always use default editor">0</Setting>
-  </Settings>
-</FileZilla3>
-fi
-EOF
+
 
 sed -i 's#^.*"Default editor".*#\t<Setting name="Default editor">2/usr/bin/gedit</Setting>#' "${file}"
 [ -e /usr/bin/atom ] && sed -i 's#^.*"Default editor".*#\t<Setting name="Default editor">2/usr/bin/atom</Setting>#' "${file}"
