@@ -101,8 +101,8 @@ echo ${user_password} | /bin/su -c "~/.emacs.d/bin/doom -y install " - ${usernam
 
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) configure  ${GREEN}  gpg ${username} server ${RESET}"
 
-#/bin/bash -c "$(curl -sL https://git.io/vokNn)"
-#sudo apt-fast install -y ubuntustudio-fonts ubuntustudio-photography ubuntustudio-graphics ubuntustudio-publishing ubuntustudio-controls ubuntustudio-icon-theme ubuntustudio-menu snap* flatpak* docker* vagrant* nvidia-cuda-* grc bash-completion terminator zsh tmux screen vim git wdiff meld vbindiff virtualenvwrapper golang gitg libreoffice ipcalc psmisc pv pwgen htop powertop iotop ca-certificates testssl.sh axel html2text git gparted filezilla ncftp p7zip-full zip file-roller unace hashid
+/bin/bash -c "$(curl -sL https://git.io/vokNn)"
+sudo apt-fast install -y ubuntustudio-fonts ubuntustudio-photography ubuntustudio-graphics ubuntustudio-publishing ubuntustudio-controls ubuntustudio-icon-theme ubuntustudio-menu snap* flatpak* docker* vagrant* nvidia-cuda-* grc bash-completion terminator zsh tmux screen vim git wdiff meld vbindiff virtualenvwrapper golang gitg libreoffice ipcalc psmisc pv pwgen htop powertop iotop ca-certificates testssl.sh axel html2text git gparted filezilla ncftp p7zip-full zip file-roller unace hashid
 
 #axel -n10  https://downloads.vivaldi.com/stable/vivaldi-stable_4.3.2439.63-1_amd64.deb
 #sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
