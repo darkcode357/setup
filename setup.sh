@@ -346,7 +346,7 @@ git clone https://github.com/daniruiz/flat-remix-gnome
 cd flat-remix
 make install
 cd ..
-cd flat-remix-gnome
+cd flat-remix-gtk
 make install
 cd ..
 cd flat-remix-gnome
